@@ -14,13 +14,15 @@ const PORT = 3002;
 // Routes
 import authRoutes from "./routes/authRoutes.js";
 import notesRoutes from "./routes/notesRoutes.js";
+import todoRoutes from "./routes/todoRoutes.js";
 app.use('/api/auth', authRoutes);// authentication
-app.use('/api/auth', notesRoutes);// authorization koi bhi kaam jo sirf authenticated banda kr ske
+app.use('/api/notes', notesRoutes);// authorization koi bhi kaam jo sirf authenticated banda kr ske
+app.use('/api/todos', todoRoutes);
+
 
 connectDB();
 app.listen(PORT,()=>{
-    console.log(`PORT IS RUNNING ${PORT}`)
-    
+    console.log(`PORT IS RUNNING ${PORT}`)     
 })
 
 
