@@ -13,7 +13,7 @@ router.post("/create", authMiddleware, createNotes);
 router.get("/get", authMiddleware, getNotes);
 router.put("/update/:id", authMiddleware, updateNote);
 router.delete("/delete/:id", authMiddleware, deleteNote);
-router.patch('/notes/:id/bookmark', authMiddleware, toggleBookmark);
+router.patch('/bookmark/:id', authMiddleware, toggleBookmark);
 
 
 export default router;
