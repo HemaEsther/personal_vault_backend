@@ -17,7 +17,8 @@ export const signup = async (req, res) => {
     const newuser = new User({ name, email, password: hashedPassword });
     await newuser.save();
 
-    res.status(201).json({ message: "User created successfully" });
+    res.status(201).json({ message: "User created successfully", user: newuser });
+
   } catch (error) {
     res
       .status(400)
@@ -43,10 +44,14 @@ export const login = async (req, res) => {
     );
 
     //send jwt in cookies
-    res.cookie("token", token, {
+    res.cookie('token', token, {
       httpOnly: true,
-      sameSite: "Strict",
+      secure:false,
+      sameSite: 'Lax',   // for local dev only
+      maxAge: 24 * 60 * 60 * 1000,
     });
+    
+    
 
     res.status(201).json({ message: "User logged in successfully" });
   } catch (error) {
@@ -55,3 +60,35 @@ export const login = async (req, res) => {
       .json({ message: "Something went wrong in login controller" });
   }
 };
+
+export const logout = async (req, res) => {
+  try {
+    // Clear the cookie by setting its expiration to a past date
+    console.log(req.cookies)
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: false, // set to true in production (with HTTPS)
+      sameSite: 'Lax',
+    });
+
+    res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong in logout controller" });
+  }
+};
+
+
+// verify token from cookie
+export const verifyUser = (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) return res.status(401).json({ message: "No token provided" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return res.status(200).json({ message: "Authenticated", user: decoded });
+  } catch (error) {
+    return res.status(403).json({ message: "Invalid token" });
+  }
+};
+
